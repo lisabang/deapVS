@@ -21,7 +21,10 @@ toolbox = base.Toolbox()
 
 class GAdescsel():
     def __init__(self, basetable, y, ngen=1000, popsize=100, indsize=5, cx=.5, mut=.05, seed=int(12345)):
-
+        '''
+        initialize GA object, giving ngen, popsize, indsize, 
+        crossover rate, mutation rate, and random seed initialization
+        '''
         creator.create("Fitness", base.Fitness, weights=(1.0,))
 
         creator.create("Individual", list, fitness=creator.Fitness, __hash__=hash_ind_list)
