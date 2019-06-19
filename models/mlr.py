@@ -23,7 +23,10 @@ def mlr(x_of_trainingset, y_actual):
 
 
 def mlrr(x_of_trainingset, y_actual):
-    #usethis
+    '''
+    get the multiple linear regression coefficients by making a numpy 
+    matrix and taking np.linalg.lstsq 
+    '''
     npones = np.ones(len(x_of_trainingset), float)
     A_sl = x_of_trainingset
     A = np.column_stack([A_sl, npones])
