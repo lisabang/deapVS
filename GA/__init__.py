@@ -129,9 +129,6 @@ class GAdescsel():
         toolbox.register("mate", tools.cxOnePoint)  # Uniform, indpb=0.5)
         toolbox.register("mutate", self.mutaRan)  # , indpb=self.mut)
         toolbox.register("select", tools.selBest)
-        # progress bar start!
-        # print 'Starting... # GEN FINISHED:',
-
         origpop = toolbox.population()
         # self.mkeindseed.count=0
         population = cp.deepcopy(origpop)
@@ -141,11 +138,6 @@ class GAdescsel():
 
         avgfitnesses = []
         popfits = 0
-        # prb = ProgressBar(self.ngen)  # , popfits)
-        # ProgressBar.score=0
-        # prb.animate()#popfits)
-        # prb.animate(popfits)
-        # steps=self.ngen/10
         for gen in range(self.ngen):
             try:
                 offspring = algorithms.varOr(population, toolbox, lambda_=self.popsize, cxpb=self.cx, mutpb=self.mut)
@@ -154,9 +146,6 @@ class GAdescsel():
                 population = toolbox.select([k for k, v in itert.groupby(sorted(offspring + population))], k=100)
                 popfits = toolbox.map(toolbox.evaluate, population)
                 prb.animate(gen)
-                # prb.score=np.mean(popfits)
-                # ProgressBar.score=property(lambda self: self.score+np.mean(popfits))
-                # prb.update_time(1, prb.score)
             except (KeyboardInterrupt, SystemExit):
                 return [origpop, toolbox.map(toolbox.evaluate, origpop), population,
                         toolbox.map(toolbox.evaluate, population)]
@@ -164,20 +153,16 @@ class GAdescsel():
                 return [origpop, toolbox.map(toolbox.evaluate, origpop), population,
                         toolbox.map(toolbox.evaluate, population)]
         return [origpop, toolbox.map(toolbox.evaluate, origpop), population, toolbox.map(toolbox.evaluate, population)]
-        print
-        "Done!"
+        print("Done!")
 
     def get_df(self, chosenind):
-        # dictofseries={}
-        # for l in range(self.indsize):
-        #        dictofseries[str(desclist[l])]=(self.basetable[desclist[l]])#, how="outer",right_index=True)
-        meh = self.basetable[chosenind]
+        btt = self.basetable[chosenind]
 
-        print
-        "r2 is: ", mlr.mlr(meh, self.y)[2], "r2adj is: ", mlr.mlr(meh, self.y)[3], "q2loo is: ", mlr.q2loo_mlr(meh, self.y)
-        print
-        "coefficients are:", m.mlr(meh, self.y)[0]
-        return meh
+        print("r2 is: ", mlr.mlr(btt, self.y)[2], 
+            "r2adj is: ", mlr.mlr(btt, self.y)[3], 
+            "q2loo is: ", mlr.q2loo_mlr(btt, self.y))
+        print("coefficients are:", m.mlr(btt, self.y)[0])
+        return btt
 
     def debug_eval(self):
         toolbox.register("evaluate", evalr2, self.y, self.basetable)
@@ -190,16 +175,8 @@ class GAdescsel():
         for fit, ind in zip(fits, population):
             ind.fitness.values = fit
         offspring = algorithms.varOr(population, toolbox, lambda_=100, cxpb=.5, mutpb=.05)
-        # print "offspring",offspring
-        # fits=toolbox.map(toolbox.evaluate, offspring)
-        print
-        offspring
         for ind in offspring:
             ind.fitness.values = toolbox.evaluate(ind)
-            print
-            ind
-            print
-            ind.fitness.values
-            # for fit, ind in zip(fits,population):
-            #    ind.fitness.values=fit
+            print(ind)
+            print(ind.fitness.values)
 
