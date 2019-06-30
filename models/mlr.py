@@ -2,19 +2,19 @@ import numpy as np
 import sklearn.model_selection as skms
 import matplotlib.pyplot as plt
 
-def mlr(x_of_trainingset, y_actual):
-    columnnames = list(x_of_trainingset.columns.values)
-    npones = np.ones(len(y_actual), float)
-    A_sl = x_of_trainingset.as_matrix()
+def mlr(x, y):
+    columnnames = list(x.columns.values)
+    npones = np.ones(len(y), float)
+    A_sl = x.as_matrix()
     A = np.column_stack([A_sl, npones])
-    lstsq, residuals, rank, something = np.linalg.lstsq(A, y_actual)
-    degfreedom = y_actual.size - 1
+    lstsq, residuals, rank, something = np.linalg.lstsq(A, y)
+    degfreedom = y.size - 1
 
-    r2 = 1 - residuals / (y_actual.size * y_actual.var())
-    r2adj = 1 - (((1 - r2) * degfreedom) / (y_actual.size - rank - 2))
-    RMSE = np.sqrt(1 - r2) * np.std(y_actual)
+    r2 = 1 - residuals / (y.size * y.var())
+    r2adj = 1 - (((1 - r2) * degfreedom) / (y.size - rank - 2))
+    RMSE = np.sqrt(1 - r2) * np.std(y)
 
-    # fitness=collections.namedtuple([x_of_trainingset],[r2,r2adj,RMSE])
+    # fitness=collections.namedtuple([x],[r2,r2adj,RMSE])
     return lstsq, rank, r2, r2adj, RMSE
 
     # y_predicted=(lstsq[0]*liu_train(0))+(lstsq[1]*liu_train(1))+(lstsq[2])+(lstsq[3])+(lstsq[4])+(lstsq[5])+lstsq[6]
@@ -22,20 +22,20 @@ def mlr(x_of_trainingset, y_actual):
     # print y_predicted
 
 
-def mlrr(x_of_trainingset, y_actual):
+def mlrr(x, y):
     '''
     get the multiple linear regression coefficients by making a numpy 
     matrix and taking np.linalg.lstsq 
     '''
-    npones = np.ones(len(x_of_trainingset), float)
-    A_sl = x_of_trainingset
+    npones = np.ones(len(x), float)
+    A_sl = x
     A = np.column_stack([A_sl, npones])
-    lstsq, residuals, rank, something = np.linalg.lstsq(A, y_actual)
+    lstsq, residuals, rank, something = np.linalg.lstsq(A, y)
     return lstsq, residuals
-def pmlr(x_of_trainingset, y_actual):
-    npones = np.ones(len(y_actual), float)
-    A = np.column_stack([x_of_trainingset, npones])
-    lstsq = np.dot(np.linalg.pinv(A), y_actual)
+def pmlr(x, y):
+    npones = np.ones(len(y), float)
+    A = np.column_stack([x, npones])
+    lstsq = np.dot(np.linalg.pinv(A), y)
     return lstsq
 
 
