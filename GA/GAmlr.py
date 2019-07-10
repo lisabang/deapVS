@@ -148,74 +148,53 @@ class GAdescsel:
         4th is the evalution of the fitness function on the final population.
  
         """
-        toolbox.register("genind", self.mkeindrand, self.indsize)
-        toolbox.register(
-            "individual", tools.initIterate, creator.Individual, toolbox.genind
-        )
-        toolbox.register(
-            "population", tools.initRepeat, list, toolbox.individual, n=self.popsize
-        )
-
-        if evalfunc == "q2loo":
+        toolbox.register("genind", self.mkeindseed, self.indsize)
+        toolbox.register("individual", tools.initIterate, creator.Individual, toolbox.genind)
+        toolbox.register("population",tools.initRepeat, list, toolbox.individual, n=self.popsize)
+        
+        if evalfunc=="q2loo":
             toolbox.register("evaluate", self.evalq2loo)
-        elif evalfunc == "r2":
+        elif evalfunc=="q2lmo":
+            toolbox.register("evaluate", self.evalq2lmo)
+        elif evalfunc=="r2":
             toolbox.register("evaluate", self.evalr2)
-        elif evalfunc == "r2adj":
+        elif evalfunc=="r2adj":
             toolbox.register("evaluate", self.evalr2adj)
         else:
-            raise ValueError(
-                "not a valid evaluation function specified; use evalr2adj, evalr2, or q2loo"
-            )
-
-        toolbox.register("mate", tools.cxOnePoint)  # Uniform, indpb=0.5)
-        toolbox.register("mutate", self.mutaRan)  # , indpb=self.mut)
+            raise ValueError("not a valid evaluation function specified; use evalr2adj, evalr2, or q2loo")
+        
+        toolbox.register("mate", tools.cxOnePoint) #Uniform, indpb=0.5)
+        toolbox.register("mutate", self.mutaRan)#, indpb=self.mut)
         toolbox.register("select", tools.selBest)
-        origpop = toolbox.population()
-        # self.mkeindseed.count=0
-        population = cp.deepcopy(origpop)
-        fits = toolbox.map(toolbox.evaluate, population)
-        for fit, ind in zip(fits, population):
-            ind.fitness.values = fit
+        #progress bar start!
+        #print 'Starting... # GEN FINISHED:',
 
-        avgfitnesses = []
-        popfits = 0
-        # prb=ProgressBar(self.ngen)
+        origpop=toolbox.population()
+        #self.mkeindseed.count=0
+        population=cp.deepcopy(origpop)
+        fits=toolbox.map(toolbox.evaluate, population)
+        for fit, ind in zip(fits,population):
+            ind.fitness.values=fit
+        
+        avgfitnesses=[]
+        popfits=0
+        #prb=ProgressBar(self.ngen)
         for gen in range(self.ngen):
             try:
-                offspring = algorithms.varOr(
-                    population,
-                    toolbox,
-                    lambda_=self.popsize,
-                    cxpb=self.cx,
-                    mutpb=self.mut,
-                )
+                offspring=algorithms.varOr(population, toolbox, lambda_=self.popsize, cxpb=self.cx, mutpb=self.mut)   
                 for ind in offspring:
-                    ind.fitness.values = toolbox.evaluate(ind)
-                population = toolbox.select(
-                    [k for k, v in itert.groupby(sorted(offspring + population))], k=100
-                )
+                    ind.fitness.values=toolbox.evaluate(ind)
+                population=toolbox.select([k for k,v in itert.groupby(sorted(offspring+population))], k=100)
                 popfits = toolbox.map(toolbox.evaluate, population)
-                # prb.animate(gen)
-                # prb.score=np.mean(popfits)
-                # ProgressBar.score=property(lambda self: self.score+np.mean(popfits))
-                # prb.update_time(1, prb.score)
+                #prb.animate(gen)
+                #prb.score=np.mean(popfits)
+                #ProgressBar.score=property(lambda self: self.score+np.mean(popfits))
+                #prb.update_time(1, prb.score)
             except (KeyboardInterrupt, SystemExit):
-                result = [
-                    origpop,
-                    toolbox.map(toolbox.evaluate, origpop),
-                    population,
-                    toolbox.map(toolbox.evaluate, population),
-                ]
-                self.pretty_print(result)
-            except:
-                result = [
-                    origpop,
-                    toolbox.map(toolbox.evaluate, origpop),
-                    population,
-                    toolbox.map(toolbox.evaluate, population),
-                ]
-                self.pretty_print(result)
-
+                result = [origpop, toolbox.map(toolbox.evaluate, origpop), population, toolbox.map(toolbox.evaluate, population)]
+                return result#self.pretty_print(returnobj)
+        result = [origpop, toolbox.map(toolbox.evaluate, origpop), population, toolbox.map(toolbox.evaluate, population)]
+        return self.pretty_print(result)
     def get_df(self, chosenind):
         btt = self.basetable[chosenind]
 
