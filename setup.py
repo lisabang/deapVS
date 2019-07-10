@@ -43,7 +43,7 @@ setup(
     ],
 
     # What does your project relate to?
-    keywords='chemoinformatics, qsar, ipython, python',
+    keywords='chemoinformatics, genetic algorithms, GA, qsar, ipython, python',
 
     # You can just specify the packages manually here if your project is
     # simple. Or you can use find_packages().
