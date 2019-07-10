@@ -2,6 +2,7 @@ import numpy as np
 import sklearn.model_selection as skms
 import matplotlib.pyplot as plt
 
+
 def mlr(x, y):
     columnnames = list(x.columns.values)
     npones = np.ones(len(y), float)
@@ -23,15 +24,17 @@ def mlr(x, y):
 
 
 def mlrr(x, y):
-    '''
+    """
     get the multiple linear regression coefficients by making a numpy 
     matrix and taking np.linalg.lstsq 
-    '''
+    """
     npones = np.ones(len(x), float)
     A_sl = x
     A = np.column_stack([A_sl, npones])
     lstsq, residuals, rank, something = np.linalg.lstsq(A, y)
     return lstsq, residuals
+
+
 def pmlr(x, y):
     npones = np.ones(len(y), float)
     A = np.column_stack([x, npones])
@@ -40,11 +43,11 @@ def pmlr(x, y):
 
 
 def kfoldmlr(xi, yi, **kwargs):
-    '''gives the y-hats for a q2LOO calculation'''
+    """gives the y-hats for a q2LOO calculation"""
     x = xi.values
     y = yi.values
-    nfolds=kwargs["nfolds"]
-    mean=kwargs["mean"]
+    nfolds = kwargs["nfolds"]
+    mean = kwargs["mean"]
     kf = skms.KFold(n_splits=nfolds)  # indices=None, shuffle=False, random_state=None)
     y_hats = []
     print(kf)
@@ -57,17 +60,17 @@ def kfoldmlr(xi, yi, **kwargs):
     # for e in y_hats:
     #    cleanyhats.append(float(e))
     stack = np.asarray(y_hats)
-    if mean==True:
+    if mean == True:
         return np.mean(stack)
     else:
         return stack
 
 
 def kfoldmlrplot(xi, yi, **kwargs):
-    '''gives the y-hats for a q2LOO calculation'''
+    """gives the y-hats for a q2LOO calculation"""
     x = xi.values
     y = yi.values
-    nfolds=kwargs["nfolds"]
+    nfolds = kwargs["nfolds"]
     kf = skms.KFold(n_splits=nfolds)  # indices=None, shuffle=False, random_state=None)
     y_hats = []
     print(kf)
@@ -76,8 +79,12 @@ def kfoldmlrplot(xi, yi, **kwargs):
         y_train, y_test = y[train_index], y[test_index]
         coefficients = mlrr(x_train, y_train)[0]
         resids = mlrr(x_train, y_train)[1]
-        plt.plot(x_train, y_train, 'o', label='Original data', markersize=5)
-        plt.plot(x_train, coefficients[0]*x_train + coefficients[1], 'r', label='Fitted line')
+        plt.plot(x_train, y_train, "o", label="Original data", markersize=5)
+        plt.plot(
+            x_train,
+            coefficients[0] * x_train + coefficients[1],
+            "r",
+            label="Fitted line",
+        )
         plt.legend()
         plt.show()
-

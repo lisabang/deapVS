@@ -9,7 +9,6 @@ from numpy.random import RandomState
 from .mlr_eval import mlr_r2
 
 
-
 def hash_ind_list(i):
     return hash(tuple(i))
 
@@ -18,16 +17,30 @@ def hash_ind_list(i):
 toolbox = base.Toolbox()
 
 
-class GAdescsel():
-    def __init__(self, basetable, y, ngen=1000, popsize=100, indsize=5, cx=.5, mut=.05, seed=int(12345)):
-        '''
+class GAdescsel:
+    def __init__(
+        self,
+        basetable,
+        y,
+        ngen=1000,
+        popsize=100,
+        indsize=5,
+        cx=0.5,
+        mut=0.05,
+        seed=int(12345),
+    ):
+        """
         initialize GA object, giving ngen, popsize, indsize, 
         crossover rate, mutation rate, and random seed initialization
-        '''
+        """
         creator.create("Fitness", base.Fitness, weights=(1.0,))
 
-        creator.create("Individual", list, fitness=creator.Fitness, __hash__=hash_ind_list)
-        creator.create("Population", list, fitness=creator.Fitness, __hash__=hash_ind_list)
+        creator.create(
+            "Individual", list, fitness=creator.Fitness, __hash__=hash_ind_list
+        )
+        creator.create(
+            "Population", list, fitness=creator.Fitness, __hash__=hash_ind_list
+        )
         # toolbox=base.Toolbox()
         global toolbox
         # global evalq2loo
@@ -42,11 +55,11 @@ class GAdescsel():
         pool = multiprocessing.Pool()
 
     def ct_calls(func):
-        '''
+        """
         this is a decorator function to count the number of calls to self.mkeinseed.count so that we can make the
         the random number generator use a different seed each time (increases by one each time)
         :return: number of times mkeinseed has been called
-        '''
+        """
 
         @functools.wraps(func)
         def decor(*args, **kwargs):
@@ -57,12 +70,14 @@ class GAdescsel():
         return decor
 
     def mkeindrand(self, desc_in_ind=5):
-        '''
+        """
         :param desc_in_ind: number of descriptors in model ("individual" in deap)
         :return: a random sample
-        '''
+        """
         while str(type(self.basetable)) != "<class 'pandas.core.frame.DataFrame'>":
-            raise TypeError("The type of descriptor table should be a Pandas dataframe.")
+            raise TypeError(
+                "The type of descriptor table should be a Pandas dataframe."
+            )
         while type(desc_in_ind) is not int:
             try:
                 print
@@ -70,8 +85,10 @@ class GAdescsel():
                 desc_in_ind = int(desc_in_ind)
                 break
             except:
-                raise ValueError("The number of descriptors per individual should be of type int")
-        print(random.sample(set(self.basetable.columns),5))
+                raise ValueError(
+                    "The number of descriptors per individual should be of type int"
+                )
+        print(random.sample(set(self.basetable.columns), 5))
         smple = random.sample(set(self.basetable.columns), desc_in_ind)
 
         return smple
@@ -91,29 +108,29 @@ class GAdescsel():
             if np.random.binomial(1, self.mut, 1) == 1:
                 choices = [x for x in list(self.basetable.columns) if x not in ind]
                 ind[ind.index(descriptor)] = random.choice(choices)
-        return ind,
+        return (ind,)
 
     def evalr2(self, ind):
-        return mlr_r2(self.basetable[ind], self.y)[0],
+        return (mlr_r2(self.basetable[ind], self.y)[0],)
 
     def evalr2adj(self, ind):
-        return mlr_r2(self.basetable[ind], self.y)[1],
+        return (mlr_r2(self.basetable[ind], self.y)[1],)
 
     def evalq2loo(self, ind):
         #        print self.basetable[ind][1]
-        return q2loo_mlr(self.basetable[ind], self.y),
+        return (q2loo_mlr(self.basetable[ind], self.y),)
 
     def printq2fitness(self, pop):
-        #this needs rewriting
+        # this needs rewriting
         q2s = []
         for ind in pop:
             q2s.append(IQSAR.mlr3.q2loo_mlr(self.basetable[ind], self.y))
         return q2s
 
-    def pretty_print(self,evolveobj):
-        '''
+    def pretty_print(self, evolveobj):
+        """
         pretty prints the result of evolve function to pd dataframe
-        '''
+        """
 
         origdf = pd.DataFrame.from_records(evolveobj[0])
         origdf["scores"] = pd.DataFrame.from_records(list(evolveobj[1]))
@@ -122,17 +139,22 @@ class GAdescsel():
         self.evo_o = origdf
         self.evo_f = finaldf
         return origdf, finaldf
+
     def evolve(self, evalfunc="q2loo"):
-        '''
+        """
         1st element returned is the original population, 
         2nd is is the evaluation of the firness function on the originalpopualtion, 
         3rd is the final population, 
         4th is the evalution of the fitness function on the final population.
  
-        '''
+        """
         toolbox.register("genind", self.mkeindrand, self.indsize)
-        toolbox.register("individual", tools.initIterate, creator.Individual, toolbox.genind)
-        toolbox.register("population", tools.initRepeat, list, toolbox.individual, n=self.popsize)
+        toolbox.register(
+            "individual", tools.initIterate, creator.Individual, toolbox.genind
+        )
+        toolbox.register(
+            "population", tools.initRepeat, list, toolbox.individual, n=self.popsize
+        )
 
         if evalfunc == "q2loo":
             toolbox.register("evaluate", self.evalq2loo)
@@ -141,45 +163,70 @@ class GAdescsel():
         elif evalfunc == "r2adj":
             toolbox.register("evaluate", self.evalr2adj)
         else:
-            raise ValueError("not a valid evaluation function specified; use evalr2adj, evalr2, or q2loo")
+            raise ValueError(
+                "not a valid evaluation function specified; use evalr2adj, evalr2, or q2loo"
+            )
 
         toolbox.register("mate", tools.cxOnePoint)  # Uniform, indpb=0.5)
         toolbox.register("mutate", self.mutaRan)  # , indpb=self.mut)
         toolbox.register("select", tools.selBest)
-        origpop=toolbox.population()
-        #self.mkeindseed.count=0
-        population=cp.deepcopy(origpop)
-        fits=toolbox.map(toolbox.evaluate, population)
-        for fit, ind in zip(fits,population):
-            ind.fitness.values=fit
-        
-        avgfitnesses=[]
-        popfits=0
-        #prb=ProgressBar(self.ngen)
+        origpop = toolbox.population()
+        # self.mkeindseed.count=0
+        population = cp.deepcopy(origpop)
+        fits = toolbox.map(toolbox.evaluate, population)
+        for fit, ind in zip(fits, population):
+            ind.fitness.values = fit
+
+        avgfitnesses = []
+        popfits = 0
+        # prb=ProgressBar(self.ngen)
         for gen in range(self.ngen):
             try:
-                offspring=algorithms.varOr(population, toolbox, lambda_=self.popsize, cxpb=self.cx, mutpb=self.mut)   
+                offspring = algorithms.varOr(
+                    population,
+                    toolbox,
+                    lambda_=self.popsize,
+                    cxpb=self.cx,
+                    mutpb=self.mut,
+                )
                 for ind in offspring:
-                    ind.fitness.values=toolbox.evaluate(ind)
-                population=toolbox.select([k for k,v in itert.groupby(sorted(offspring+population))], k=100)
+                    ind.fitness.values = toolbox.evaluate(ind)
+                population = toolbox.select(
+                    [k for k, v in itert.groupby(sorted(offspring + population))], k=100
+                )
                 popfits = toolbox.map(toolbox.evaluate, population)
-                #prb.animate(gen)
-                #prb.score=np.mean(popfits)
-                #ProgressBar.score=property(lambda self: self.score+np.mean(popfits))
-                #prb.update_time(1, prb.score)
+                # prb.animate(gen)
+                # prb.score=np.mean(popfits)
+                # ProgressBar.score=property(lambda self: self.score+np.mean(popfits))
+                # prb.update_time(1, prb.score)
             except (KeyboardInterrupt, SystemExit):
-                result = [origpop, toolbox.map(toolbox.evaluate, origpop), population, toolbox.map(toolbox.evaluate, population)]
+                result = [
+                    origpop,
+                    toolbox.map(toolbox.evaluate, origpop),
+                    population,
+                    toolbox.map(toolbox.evaluate, population),
+                ]
                 self.pretty_print(result)
             except:
-                result = [origpop, toolbox.map(toolbox.evaluate, origpop), population, toolbox.map(toolbox.evaluate, population)]
+                result = [
+                    origpop,
+                    toolbox.map(toolbox.evaluate, origpop),
+                    population,
+                    toolbox.map(toolbox.evaluate, population),
+                ]
                 self.pretty_print(result)
 
     def get_df(self, chosenind):
         btt = self.basetable[chosenind]
 
-        print("r2 is: ", mlr.mlr(btt, self.y)[2], 
-            "r2adj is: ", mlr.mlr(btt, self.y)[3], 
-            "q2loo is: ", mlr.q2loo_mlr(btt, self.y))
+        print(
+            "r2 is: ",
+            mlr.mlr(btt, self.y)[2],
+            "r2adj is: ",
+            mlr.mlr(btt, self.y)[3],
+            "q2loo is: ",
+            mlr.q2loo_mlr(btt, self.y),
+        )
         print("coefficients are:", m.mlr(btt, self.y)[0])
         return btt
 
@@ -193,7 +240,9 @@ class GAdescsel():
 
         for fit, ind in zip(fits, population):
             ind.fitness.values = fit
-        offspring = algorithms.varOr(population, toolbox, lambda_=100, cxpb=.5, mutpb=.05)
+        offspring = algorithms.varOr(
+            population, toolbox, lambda_=100, cxpb=0.5, mutpb=0.05
+        )
         for ind in offspring:
             ind.fitness.values = toolbox.evaluate(ind)
             print(ind)

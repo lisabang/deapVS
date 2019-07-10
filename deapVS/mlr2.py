@@ -10,43 +10,41 @@ from collections import deque
 import collections
 
 
-def mlr(x_of_trainingset,y_actual):
+def mlr(x_of_trainingset, y_actual):
     import numpy as np
-    npones=np.ones(len(y_actual), float)
 
-    A_sl=x_of_trainingset.as_matrix()
-    A=np.column_stack([A_sl,npones])
+    npones = np.ones(len(y_actual), float)
 
-    lstsq,residuals,rank,something=np.linalg.lstsq(A, y_actual)
-    #print "coefficient output:"
-    #print lstsq
+    A_sl = x_of_trainingset.as_matrix()
+    A = np.column_stack([A_sl, npones])
 
-    r2=1-residuals/(y_actual.size*y_actual.var())
-    #print "r2:"
-    #print r2
+    lstsq, residuals, rank, something = np.linalg.lstsq(A, y_actual)
+    # print "coefficient output:"
+    # print lstsq
 
-    degfreedom=y_actual.size-1
-    #print "degrees of freedom:"
-    #print degfreedom
+    r2 = 1 - residuals / (y_actual.size * y_actual.var())
+    # print "r2:"
+    # print r2
+
+    degfreedom = y_actual.size - 1
+    # print "degrees of freedom:"
+    # print degfreedom
     y_actual.var()
 
-    r2adj=1-(((1-r2)*degfreedom)/(y_actual.size-rank-1))
-    #print "r2adj:"
-    #print r2adj
+    r2adj = 1 - (((1 - r2) * degfreedom) / (y_actual.size - rank - 1))
+    # print "r2adj:"
+    # print r2adj
 
-    RMSE=np.sqrt(1-r2)*np.std(y_actual)
-    #print "RMSE:"
-    #print RMSE
+    RMSE = np.sqrt(1 - r2) * np.std(y_actual)
+    # print "RMSE:"
+    # print RMSE
 
-
-    
-    #fitness=collections.namedtuple([x_of_trainingset],[r2,r2adj,RMSE])
+    # fitness=collections.namedtuple([x_of_trainingset],[r2,r2adj,RMSE])
     return lstsq, r2, r2adj, RMSE
 
-
-    #y_predicted=(lstsq[0]*liu_train(0))+(lstsq[1]*liu_train(1))+(lstsq[2])+(lstsq[3])+(lstsq[4])+(lstsq[5])+lstsq[6]
-    #print "y-predicted:"
-    #print y_predicted
+    # y_predicted=(lstsq[0]*liu_train(0))+(lstsq[1]*liu_train(1))+(lstsq[2])+(lstsq[3])+(lstsq[4])+(lstsq[5])+lstsq[6]
+    # print "y-predicted:"
+    # print y_predicted
 
     """
     LOOdict={}
