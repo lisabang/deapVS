@@ -1,0 +1,45 @@
+Metadata-Version: 2.1
+Name: DEAP-VS-variable-selection-toolkit-for-IPython
+Version: 0.1.dev0
+Summary: DEAP-VS project
+Home-page: https://github.com/lisabang/deapvs
+Author: Lisa Bang
+Author-email: lisagbang@gmail.com
+License: MIT
+Description: DEAP-VS
+        ---
+        
+        DEAP-VS is a wrapper around DEAP to allow DEAP to be used easily and quickly for the specific problem of variable selection.
+        
+        In order to run DEAP-VS, clone this git, change to the DEAP-VS directory, and do: 
+        
+        ```
+        python setup.py install
+        ```
+        
+        
+        | Dependencies:
+        | ----------------------------
+        | scikit-learn 0.16+*
+        | numpy 1.9+*
+        | scipy*
+        | pandas*
+        | ipython 3.0+*
+        | matplotlib*
+        | DEAP
+        
+        
+        asterisk (*) indicates that these packages are included in anaconda.
+        
+        
+        Author: Lisa Bang.
+        
+Keywords: chemoinformatics,genetic algorithms,GA,qsar,ipython,python
+Platform: UNKNOWN
+Classifier: Development Status :: 3 - Alpha
+Classifier: Intended Audience :: Developers
+Classifier: Topic :: Software Development :: Build Tools
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Programming Language :: Python :: 3.5
+Provides-Extra: dev
+Provides-Extra: test

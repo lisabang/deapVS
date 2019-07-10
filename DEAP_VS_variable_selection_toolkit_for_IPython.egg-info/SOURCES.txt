@@ -1,0 +1,10 @@
+setup.py
+DEAP_VS_variable_selection_toolkit_for_IPython.egg-info/PKG-INFO
+DEAP_VS_variable_selection_toolkit_for_IPython.egg-info/SOURCES.txt
+DEAP_VS_variable_selection_toolkit_for_IPython.egg-info/dependency_links.txt
+DEAP_VS_variable_selection_toolkit_for_IPython.egg-info/entry_points.txt
+DEAP_VS_variable_selection_toolkit_for_IPython.egg-info/requires.txt
+DEAP_VS_variable_selection_toolkit_for_IPython.egg-info/top_level.txt
+GA/GA.py
+GA/__init__.py
+GA/mlr_eval.py
