@@ -11,7 +11,7 @@ DEAP-VS is a wrapper around DEAP to allow DEAP to be used easily and quickly for
 | pandas*
 | ipython 3.0+*
 | matplotlib*
-| DEAP (if using Genetic Algorithm)
+| DEAP
 
 
 asterisk (*) indicates that these packages are included in anaconda.
