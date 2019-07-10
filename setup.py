@@ -46,7 +46,7 @@ setup(
     # https://packaging.python.org/en/latest/requirements.html
     install_requires=[
         "deap<=1.3",
-        "sklearn=0.20.3",
+        "sklearn<=0.20.3",
         "numpy<=1.9",
         "scipy<=1.1",
         "matplotlib<=3.0",
