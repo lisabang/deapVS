@@ -1,2 +1,2 @@
-import GA
-import models
+import .GA
+import .models
