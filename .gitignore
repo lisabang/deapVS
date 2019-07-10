@@ -5,5 +5,5 @@ scikit_learn-0.20.3.dist-info/*
 scipy/*
 scipy-1.2.1.dist-info/*
 sklearn/*
-*.egg-info*
+*.egg*
 .DS_Store
