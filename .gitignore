@@ -1,4 +1,5 @@
 venv/*
+build/*
 numpy/*
 numpy-1.16.3.dist-info/*
 scikit_learn-0.20.3.dist-info/*
@@ -7,3 +8,5 @@ scipy-1.2.1.dist-info/*
 sklearn/*
 *.egg*
 .DS_Store
+__pycache__
+*.ipynb_checkpoints*

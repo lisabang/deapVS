@@ -1,1 +1,1 @@
-import GAmlr as GAmlr
+from .GAmlr import GAdescsel

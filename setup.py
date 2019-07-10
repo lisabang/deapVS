@@ -45,13 +45,13 @@ setup(
     # requirements files see:
     # https://packaging.python.org/en/latest/requirements.html
     install_requires=[
-        "deap<=1.0",
-        "sklearn",
-        "numpy",
-        "scipy",
-        "matplotlib",
-        "ipython",
-        "pandas",
+        "deap<=1.3",
+        "sklearn=0.20.3",
+        "numpy<=1.9",
+        "scipy<=1.1",
+        "matplotlib<=3.0",
+        "ipython<=7.4.0",
+        "pandas<=0.23.0",
     ],
     # List additional groups of dependencies here (e.g. development
     # dependencies). You can install these using the following syntax,
