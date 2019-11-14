@@ -47,8 +47,8 @@ setup(
     install_requires=[
         "deap<=1.3",
         "sklearn<=0.20.3",
-        "numpy<=1.9",
-        "scipy<=1.1",
+        "numpy<=1.16",
+        "scipy<=1.3",
         "matplotlib<=3.0",
         "ipython<=7.4.0",
         "pandas<=0.23.0",
